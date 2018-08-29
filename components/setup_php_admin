@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mkdir /home/$server_name/private_html/phpmyadmin/
+cd /home/$server_name/private_html/phpmyadmin/
+wget --no-check-certificate -q https://files.phpmyadmin.net/phpMyAdmin/$phpmyadmin_version/phpMyAdmin-$phpmyadmin_version-english.zip
+unzip -q phpMyAdmin-$phpmyadmin_version-english.zip
+mv -f phpMyAdmin-$phpmyadmin_version-english/* .
+rm -rf phpMyAdmin-$phpmyadmin_version-english*

@@ -1,0 +1,34 @@
+#!/bin/bash
+printf "=========================================================================\n"
+printf "Installing server... \n"
+printf "=========================================================================\n"
+
+# Install Nginx, PHP-FPM and modules
+
+# Enable Remi Repo
+yum-config-manager --enable remi
+
+if [ "$php_version" = "7.1" ]; then
+    yum-config-manager --enable remi-php71
+    yum -y install nginx php-fpm php-common php-gd php-mysqlnd php-pdo php-xml php-mbstring php-mcrypt php-curl php-opcache php-cli php-pecl-zip
+elif [ "$php_version" = "7.0" ]; then
+    yum-config-manager --enable remi-php70
+    yum -y install nginx php-fpm php-common php-gd php-mysqlnd php-pdo php-xml php-mbstring php-mcrypt php-curl php-opcache php-cli php-pecl-zip
+elif [ "$php_version" = "5.6" ]; then
+    yum-config-manager --enable remi-php56
+    yum -y install nginx php-fpm php-common php-gd php-mysqlnd php-pdo php-xml php-mbstring php-mcrypt php-curl php-opcache php-cli
+elif [ "$php_version" = "5.5" ]; then
+    yum-config-manager --enable remi-php55
+    yum -y install nginx php-fpm php-common php-gd php-mysqlnd php-pdo php-xml php-mbstring php-mcrypt php-curl php-opcache php-cli
+else
+    yum -y install nginx php-fpm php-common php-gd php-mysqlnd php-pdo php-xml php-mbstring php-mcrypt php-curl php-devel php-cli gcc
+fi
+
+# Install MariaDB
+yum -y install MariaDB-server MariaDB-client
+
+# Install Others
+yum -y install exim syslog-ng syslog-ng-libdbi cronie fail2ban unzip zip nano openssl ntpdate iptables-services
+
+ntpdate asia.pool.ntp.org
+hwclock --systohc

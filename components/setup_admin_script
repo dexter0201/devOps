@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /home/$server_name/private_html/
+cp -rf ./lib/administrator/* .
+printf "admin:$(openssl passwd -apr1 $admin_password)\n" > /home/$server_name/private_html/hocvps/.htpasswd
+sed -i "s/rootpassword/$root_password/g" /home/$server_name/private_html/hocvps/SQLManager.php

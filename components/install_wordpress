@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ "$1" = "wordpress" ]; then
+    printf "=========================================================================\n"
+    printf "Setup basic MariaDB ... \n"
+    printf "=========================================================================\n"
+    cd /home/$server_name/public_html/
+    rm -f index.html
+    # Generate wordpress database
+    wordpress_password=`date |md5sum |cut -c '1-15'`
+    secure_table_prefix=`date |md5sum |cut -c '1-5'`
+    mysql -u root -p"$root_password" -e "CREATE DATABASE wordpress;GRANT ALL PRIVILEGES ON wordpress.* TO wordpress@localhost IDENTIFIED BY '$wordpress_password';FLUSH PRIVILEGES;"
+
+    # Download latest WordPress and uncompress
+    wget https://wordpress.org/latest.tar.gz
+    tar zxf latest.tar.gz
+    mv wordpress/* ./
+
+    # Grab Salt Keys
+    wget -O /tmp/wp.keys https://api.wordpress.org/secret-key/1.1/salt/
+
+    # Butcher our wp-config.php file
+    sed -e "s/database_name_here/wordpress/" -e "s/username_here/wordpress/" -e "s/password_here/"$wordpress_password"/"  -e "s/wp_/wp_"$secure_table_prefix"_/" wp-config-sample.php > wp-config.php
+    sed -i '/#@-/r /tmp/wp.keys' wp-config.php
+    sed -i "/#@+/,/#@-/d" wp-config.php
+
+    # Tidy up
+    rm -rf wordpress latest.tar.gz /tmp/wp.keys wp wp-config-sample.php
+fi

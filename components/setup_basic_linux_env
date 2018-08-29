@@ -1,0 +1,10 @@
+#!/bin/bash
+
+rm -f /etc/localtime
+ln -sf /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime
+
+if [ -s /etc/selinux/config ]; then
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
+fi
+setenforce 0

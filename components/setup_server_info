@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mkdir /home/$server_name/private_html/serverinfo/
+cd /home/$server_name/private_html/serverinfo/
+cp ./lib/lib-index.php ./index.php

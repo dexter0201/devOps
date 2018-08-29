@@ -1,0 +1,35 @@
+#!/bin/bash
+
+sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
+
+cat > "/etc/fail2ban/jail.local" <<END
+[sshd]
+enabled  = true
+filter   = sshd
+action   = iptables[name=SSH, port=2222, protocol=tcp]
+logpath  = /var/log/secure
+maxretry = 3
+bantime = 3600
+
+[nginx-http-auth]
+enabled = true
+filter = nginx-http-auth
+action = iptables[name=NoAuthFailures, port=$admin_port, protocol=tcp]
+logpath = /home/$server_name/logs/nginx_error.log
+maxretry = 3
+bantime = 3600
+END
+
+systemctl start fail2ban.service
+
+# Open port
+if [ -f /etc/sysconfig/iptables ]; then
+    iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 25 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 465 -j ACCEPT
+    iptables -I INPUT -p tcp --dport 587 -j ACCEPT
+    iptables -I INPUT -p tcp --dport $admin_port -j ACCEPT
+    iptables -I INPUT -p tcp --dport 2222 -j ACCEPT
+    service iptables save
+fi

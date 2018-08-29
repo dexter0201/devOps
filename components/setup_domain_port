@@ -1,0 +1,16 @@
+#!/bin/bash
+
+printf "\nEnter main domain (non-www or www): "
+read server_name
+if [ "$server_name" = "" ]; then
+    server_name="dwg.com"
+    echo "Wrong input, using default dwg.com"
+fi
+
+printf "\nEnter admin port: "
+read admin_port
+if [ "$admin_port" == "" ] || [ $admin_port == "2222" ] || [ $admin_port -lt 2000 ] || [ $admin_port -gt 9999 ] || [ $(lsof -i -P | grep ":$admin_port " | wc -l) != "0" ]; then
+    admin_port=$(date +'%Y')
+    echo "Wrong input, using default $admin_port"
+    echo
+fi

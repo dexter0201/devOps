@@ -1,0 +1,21 @@
+#!/bin/bash
+
+mkdir -p /var/lib/php/session
+chown -R nginx:nginx /var/lib/php
+chown nginx:nginx /home/$server_name
+chown -R nginx:nginx /home/*/public_html
+chown -R nginx:nginx /home/*/private_html
+
+rm -f /root/install
+echo -n "cd /home" >> /root/.bashrc
+
+mkdir -p /etc/dwg/
+
+cat > "/etc/dwg/scripts.conf" <<END
+server_name="$server_name"
+server_ip="$server_ip"
+admin_port="$admin_port"
+script_url="$script_url"
+mariadb_root_password="$root_password"
+END
+chmod 600 /etc/dwg/scripts.conf
